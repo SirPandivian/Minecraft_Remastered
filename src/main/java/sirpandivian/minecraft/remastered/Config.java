@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@EventBusSubscriber(modid = RemasteredMain.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
     // Builder
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
@@ -31,11 +30,16 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER.comment("What you want the introduction message to be for the magic number").define("magicNumberIntroduction", "The magic number is... ");
 
     // Example list of strings that are treated as resource locations for items
-    private static final ModConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER.comment("A list of items to log on common setup.").defineListAllowEmpty("items", List.of("minecraft:iron_ingot"), Config::validateItemName);
+    private static final ModConfigSpec.ConfigValue<List<? extends String>> ITEM_STRINGS = BUILDER.comment("A list of items to log on common setup.").define("items", List.of("minecraft:iron_ingot"), Config::validateItemName);
 
     // Validate item names for string to item conversion
     private static boolean validateItemName(final Object obj) {
-        return obj instanceof String itemName && BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemName));
+        if (obj instanceof List<?> list) {
+            return list.stream().allMatch(element ->
+                    element instanceof String itemName && BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemName))
+            );
+        }
+        return false;
     }
 
     // Define Spec

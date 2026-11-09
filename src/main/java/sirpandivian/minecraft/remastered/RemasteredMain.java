@@ -33,6 +33,12 @@ public class RemasteredMain {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
+        // Register the config
+        modEventBus.register(Config.class);
+
+        // Register client events
+        modEventBus.register(ClientModEvents.class);
+
         /*
         Registry Registers
         */
@@ -76,7 +82,6 @@ public class RemasteredMain {
         LOGGER.info("HELLO from server starting");
     }
 
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
